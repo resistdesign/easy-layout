@@ -97,6 +97,7 @@ const testLayoutCoords = getEasyLayoutCoords(testLayoutAreas);
 export function LayoutDemo() {
   return (
     <div
+      className="LayoutDemo"
       style={{
         position: 'relative',
         backgroundColor: 'darkgray',

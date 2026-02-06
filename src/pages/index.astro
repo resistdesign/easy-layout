@@ -3,6 +3,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import {LayoutDemo} from '../components/LayoutDemo.tsx';
 ---
 
+<style>
+    .LayoutDemo {
+        & > div {
+            background-color: white;
+        }
+    }
+</style>
+
 <BaseLayout title="Astro + React Harness">
     <main>
         <h1>Astro + React Harness</h1>
