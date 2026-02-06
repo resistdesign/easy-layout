@@ -1,7 +1,3 @@
-type CounterProps = {
-  initial?: number;
-};
-
 export type EasyLayoutArea = {
   startX: number;
   startY: number;
@@ -98,10 +94,11 @@ const testLayoutAreas = [
 ];
 const testLayoutCoords = getEasyLayoutCoords(testLayoutAreas);
 
-export function LayoutDemo({initial = 0}: CounterProps) {
+export function LayoutDemo() {
   return (
     <div
       style={{
+        position: 'relative',
         backgroundColor: 'darkgray',
         width: '50vw',
         height: '40vh',
