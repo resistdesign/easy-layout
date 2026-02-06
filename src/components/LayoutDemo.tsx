@@ -1,3 +1,5 @@
+import {useMemo, useState} from 'react';
+
 export type EasyLayoutArea = {
   startX: number;
   startY: number;
@@ -127,32 +129,201 @@ export const getEasyLayoutCoords = (
   return output;
 };
 
-const testLayoutAreas = [
-  ['a', 'a', 'b'],
-  ['c', 'c', 'b'],
-];
-const testLayoutCoords = getEasyLayoutCoords(
-  testLayoutAreas,
-  20,
-  20,
-  800,
-  200,
-);
-
 export function LayoutDemo() {
+  const [demoWidth, setDemoWidth] = useState(1000);
+  const [demoHeight, setDemoHeight] = useState(400);
+  const [demoPadding, setDemoPadding] = useState(20);
+  const [demoGap, setDemoGap] = useState(20);
+  const testLayoutAreas = useMemo(() => ([
+    ['a', 'a', 'b'],
+    ['c', 'c', 'b'],
+  ]), []);
+  const testLayoutCoords = useMemo(() => getEasyLayoutCoords(
+    testLayoutAreas,
+    demoPadding,
+    demoGap,
+    demoWidth,
+    demoHeight,
+  ), [testLayoutAreas, demoPadding, demoGap, demoWidth, demoHeight]);
+
   return (
-    <div
-      className="LayoutDemo"
-      style={{
-        position: 'relative',
-        backgroundColor: 'darkgray',
-        width: '800px',
-        height: '200px',
-      }}
-    >
-      <div style={testLayoutCoords.a}>a</div>
-      <div style={testLayoutCoords.b}>b</div>
-      <div style={testLayoutCoords.c}>c</div>
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          gap: 12,
+          alignItems: 'center',
+          marginBottom: 16,
+          flexWrap: 'wrap',
+          fontFamily: '"Space Grotesk", "Segoe UI", sans-serif',
+        }}
+      >
+        <label
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 6,
+            color: '#1e1e1e',
+            fontSize: 12,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+          }}
+        >
+          Width
+          <input
+            type="number"
+            min={200}
+            max={1600}
+            value={demoWidth}
+            onChange={(event) => {
+              const nextValue = Number(event.target.value);
+              if (!Number.isNaN(nextValue)) {
+                setDemoWidth(nextValue);
+              }
+            }}
+            style={{
+              appearance: 'none',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: '1px solid #c7c7c7',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%)',
+              color: '#1e1e1e',
+              fontSize: 16,
+              fontWeight: 600,
+              width: 140,
+              boxShadow: '0 8px 20px rgba(16, 24, 40, 0.08)',
+              outlineColor: '#ff7849',
+            }}
+          />
+        </label>
+        <label
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 6,
+            color: '#1e1e1e',
+            fontSize: 12,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+          }}
+        >
+          Height
+          <input
+            type="number"
+            min={200}
+            max={900}
+            value={demoHeight}
+            onChange={(event) => {
+              const nextValue = Number(event.target.value);
+              if (!Number.isNaN(nextValue)) {
+                setDemoHeight(nextValue);
+              }
+            }}
+            style={{
+              appearance: 'none',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: '1px solid #c7c7c7',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%)',
+              color: '#1e1e1e',
+              fontSize: 16,
+              fontWeight: 600,
+              width: 140,
+              boxShadow: '0 8px 20px rgba(16, 24, 40, 0.08)',
+              outlineColor: '#ff7849',
+            }}
+          />
+        </label>
+        <label
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 6,
+            color: '#1e1e1e',
+            fontSize: 12,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+          }}
+        >
+          Padding
+          <input
+            type="number"
+            min={0}
+            max={200}
+            value={demoPadding}
+            onChange={(event) => {
+              const nextValue = Number(event.target.value);
+              if (!Number.isNaN(nextValue)) {
+                setDemoPadding(nextValue);
+              }
+            }}
+            style={{
+              appearance: 'none',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: '1px solid #c7c7c7',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%)',
+              color: '#1e1e1e',
+              fontSize: 16,
+              fontWeight: 600,
+              width: 140,
+              boxShadow: '0 8px 20px rgba(16, 24, 40, 0.08)',
+              outlineColor: '#ff7849',
+            }}
+          />
+        </label>
+        <label
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 6,
+            color: '#1e1e1e',
+            fontSize: 12,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+          }}
+        >
+          Gap
+          <input
+            type="number"
+            min={0}
+            max={200}
+            value={demoGap}
+            onChange={(event) => {
+              const nextValue = Number(event.target.value);
+              if (!Number.isNaN(nextValue)) {
+                setDemoGap(nextValue);
+              }
+            }}
+            style={{
+              appearance: 'none',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: '1px solid #c7c7c7',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%)',
+              color: '#1e1e1e',
+              fontSize: 16,
+              fontWeight: 600,
+              width: 140,
+              boxShadow: '0 8px 20px rgba(16, 24, 40, 0.08)',
+              outlineColor: '#ff7849',
+            }}
+          />
+        </label>
+      </div>
+      <div
+        className="LayoutDemo"
+        style={{
+          position: 'relative',
+          backgroundColor: 'darkgray',
+          width: demoWidth,
+          height: demoHeight,
+        }}
+      >
+        <div style={testLayoutCoords.a}>a</div>
+        <div style={testLayoutCoords.b}>b</div>
+        <div style={testLayoutCoords.c}>c</div>
+      </div>
     </div>
   );
 }
