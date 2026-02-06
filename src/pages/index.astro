@@ -1,16 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Counter } from '../components/Counter';
+import {LayoutDemo} from '../components/LayoutDemo.tsx';
 ---
 
 <BaseLayout title="Astro + React Harness">
-  <main>
-    <h1>Astro + React Harness</h1>
-    <p>Start your concept work here.</p>
+    <main>
+        <h1>Astro + React Harness</h1>
+        <p>Start your concept work here.</p>
 
-    <section>
-      <h2>Interactive React</h2>
-      <Counter client:load initial={1} />
-    </section>
-  </main>
+        <section>
+            <h2>Interactive React</h2>
+            <LayoutDemo client:load initial={1}/>
+        </section>
+    </main>
 </BaseLayout>
