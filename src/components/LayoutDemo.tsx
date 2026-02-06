@@ -36,6 +36,7 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
 
       if (!hasStartX) {
         existingArea.startX = posX;
+        existingArea.endX = posX;
         hasStartXMap[a] = true;
       } else {
         existingArea.endX = posX;
@@ -43,6 +44,7 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
 
       if (!hasStartY) {
         existingArea.startY = posY;
+        existingArea.endY = posY;
         hasStartYMap[a] = true;
       } else {
         existingArea.endY = posY;
