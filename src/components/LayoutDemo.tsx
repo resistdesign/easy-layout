@@ -17,7 +17,7 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
 
     for (let j: number = 0; j < row.length; j++) {
       const a: string = row[j];
-      const existingArea: EasyLayoutArea = output[a] || {x: 0, y: 0, width: 0, height: 0};
+      const existingArea: EasyLayoutArea = output[a] || {startX: 0, startY: 0, endX: 0, endY: 0};
       const hasStartX = hasStartXMap[a] || false;
       const hasStartY = hasStartYMap[a] || false;
       const posX = i;
@@ -53,6 +53,7 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
   height: string;
 }> => {
   const layout = makeEasyLayout(areas);
+  console.log(layout);
   const rows = areas.length;
   const cols = areas.reduce((acc, row) => Math.max(acc, row.length), 0);
   const output: Record<string, {
@@ -71,17 +72,17 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
 
   for (const [key, area] of Object.entries(layout)) {
     const {startX, startY, endX, endY} = area;
-    const top = `${paddingPercentage + (startY * vPortionSize) + (startY * gapPercentage)}%`;
-    const left = `${paddingPercentage + (startX * hPortionSize) + (startX * gapPercentage)}%`;
-    const width = `${(endX - startX + 1) * hPortionSize}%`;
-    const height = `${(endY - startY + 1) * vPortionSize}%`;
+    const topPercentageWithPaddingAndGap = paddingPercentage + (startY * vPortionSize) + (startY * gapPercentage);
+    const leftPercentageWithPaddingAndGap = paddingPercentage + (startX * hPortionSize) + (startX * gapPercentage);
+    const widthPercentageWithPaddingAndGap = ((endX - startX + 1) * hPortionSize) + (startX * gapPercentage);
+    const heightPercentageWithPaddingAndGap = ((endY - startY + 1) * vPortionSize) + (startY * gapPercentage);
 
     output[key] = {
       position: 'absolute',
-      top,
-      left,
-      width,
-      height,
+      top: `${topPercentageWithPaddingAndGap}%`,
+      left: `${leftPercentageWithPaddingAndGap}%`,
+      width: `${widthPercentageWithPaddingAndGap}%`,
+      height: `${heightPercentageWithPaddingAndGap}%`,
     };
   }
 
@@ -92,7 +93,11 @@ const testLayoutAreas = [
   ['a', 'a', 'b'],
   ['c', 'c', 'b'],
 ];
-const testLayoutCoords = getEasyLayoutCoords(testLayoutAreas);
+const testLayoutCoords = getEasyLayoutCoords(
+  testLayoutAreas,
+  2,
+  2,
+);
 
 export function LayoutDemo() {
   return (
