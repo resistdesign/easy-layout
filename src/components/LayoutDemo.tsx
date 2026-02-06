@@ -5,10 +5,18 @@ export type EasyLayoutArea = {
   endY: number;
 };
 
-export type EasyLayoutOutput = Record<string, EasyLayoutArea>;
+export type EasyLayoutOutput = {
+  rows: number;
+  columns: number;
+  layout: Record<string, EasyLayoutArea>;
+};
 
 export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
-  const output: EasyLayoutOutput = {};
+  const output: EasyLayoutOutput = {
+    rows: areas.length,
+    columns: areas.reduce((acc, row) => Math.max(acc, row.length), 0),
+    layout: {},
+  };
   const hasStartXMap: Record<string, boolean> = {};
   const hasStartYMap: Record<string, boolean> = {};
 
@@ -17,7 +25,7 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
 
     for (let j: number = 0; j < row.length; j++) {
       const a: string = row[j];
-      const existingArea: EasyLayoutArea = output[a] || {startX: 0, startY: 0, endX: 0, endY: 0};
+      const existingArea: EasyLayoutArea = output.layout[a] || {startX: 0, startY: 0, endX: 0, endY: 0};
       const hasStartX = hasStartXMap[a] || false;
       const hasStartY = hasStartYMap[a] || false;
       const posX = j + 1;
@@ -38,7 +46,7 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
         existingArea.endY = posY;
       }
 
-      output[a] = existingArea;
+      output.layout[a] = existingArea;
     }
   }
 
@@ -52,10 +60,11 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
   width: string;
   height: string;
 }> => {
-  const layout = makeEasyLayout(areas);
-  console.log(layout);
-  const rows = areas.length;
-  const cols = areas.reduce((acc, row) => Math.max(acc, row.length), 0);
+  const {
+    rows,
+    columns,
+    layout,
+  } = makeEasyLayout(areas);
   const output: Record<string, {
     position: 'absolute';
     top: string;
@@ -63,11 +72,11 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
     width: string;
     height: string;
   }> = {};
-  const totalHGutterPercentage = (paddingPercentage * 2) + (gapPercentage * (cols - 1));
+  const totalHGutterPercentage = (paddingPercentage * 2) + (gapPercentage * (columns - 1));
   const totalVGutterPercentage = (paddingPercentage * 2) + (gapPercentage * (rows - 1));
   const remainingHPercentage = 100 - totalHGutterPercentage;
   const remainingVPercentage = 100 - totalVGutterPercentage;
-  const hPortionSize = remainingHPercentage / cols;
+  const hPortionSize = remainingHPercentage / columns;
   const vPortionSize = remainingVPercentage / rows;
 
   for (const [key, area] of Object.entries(layout)) {
