@@ -50,6 +50,7 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
 };
 
 export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: number = 0, gapPercentage: number = 0): Record<string, {
+  position: 'absolute';
   top: string;
   left: string;
   width: string;
@@ -59,6 +60,7 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
   const rows = areas.length;
   const cols = areas.reduce((acc, row) => Math.max(acc, row.length), 0);
   const output: Record<string, {
+    position: 'absolute';
     top: string;
     left: string;
     width: string;
@@ -78,7 +80,13 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
     const width = `${(endX - startX + 1) * hPortionSize}%`;
     const height = `${(endY - startY + 1) * vPortionSize}%`;
 
-    output[key] = {top, left, width, height};
+    output[key] = {
+      position: 'absolute',
+      top,
+      left,
+      width,
+      height,
+    };
   }
 
   return output;
