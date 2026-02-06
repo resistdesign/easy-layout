@@ -53,7 +53,13 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
   return output;
 };
 
-export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: number = 0, gapPercentage: number = 0): Record<string, {
+export const getEasyLayoutCoords = (
+  areas: string[][] = [],
+  paddingAmount: number | string = 0,
+  gapAmount: number | string = 0,
+  width?: number,
+  height?: number,
+): Record<string, {
   position: 'absolute';
   top: string;
   left: string;
@@ -72,8 +78,20 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
     width: string;
     height: string;
   }> = {};
-  const totalHGutterPercentage = (paddingPercentage * 2) + (gapPercentage * (columns - 1));
-  const totalVGutterPercentage = (paddingPercentage * 2) + (gapPercentage * (rows - 1));
+  const paddingIsPercentage = typeof paddingAmount === 'string' && paddingAmount.endsWith('%');
+  const gapIsPercentage = typeof gapAmount === 'string' && gapAmount.endsWith('%');
+  const basePadding = paddingIsPercentage ?
+    parseInt(paddingAmount.slice(0, -1), 10) :
+    parseFloat(paddingAmount.toString());
+  const baseGap = gapIsPercentage ?
+    parseInt(gapAmount.slice(0, -1), 10) :
+    parseFloat(gapAmount.toString());
+  const paddingHPercentage = !paddingIsPercentage && typeof width === 'number' ? (basePadding / width) * 100 : basePadding;
+  const paddingVPercentage = !paddingIsPercentage && typeof height === 'number' ? (basePadding / height) * 100 : basePadding;
+  const gapHPercentage = !gapIsPercentage && typeof width === 'number' ? (baseGap / width) * 100 : baseGap;
+  const gapVPercentage = !gapIsPercentage && typeof height === 'number' ? (baseGap / height) * 100 : baseGap;
+  const totalHGutterPercentage = (paddingHPercentage * 2) + (gapHPercentage * (columns - 1));
+  const totalVGutterPercentage = (paddingVPercentage * 2) + (gapVPercentage * (rows - 1));
   const remainingHPercentage = 100 - totalHGutterPercentage;
   const remainingVPercentage = 100 - totalVGutterPercentage;
   const hPortionSize = remainingHPercentage / columns;
@@ -86,12 +104,12 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
       endX,
       endY
     } = area;
-    const hStartGapTotal = gapPercentage * (startX - 1);
-    const vStartGapTotal = gapPercentage * (startY - 1);
+    const hStartGapTotal = gapHPercentage * (startX - 1);
+    const vStartGapTotal = gapVPercentage * (startY - 1);
     const hCoveredPortions = endX - (startX - 1);
     const vCoveredPortions = endY - (startY - 1);
-    const hCoveredGap = (hCoveredPortions - 1) * gapPercentage;
-    const vCoveredGap = (vCoveredPortions - 1) * gapPercentage;
+    const hCoveredGap = (hCoveredPortions - 1) * gapHPercentage;
+    const vCoveredGap = (vCoveredPortions - 1) * gapVPercentage;
     const hCoveredTotal = (hCoveredPortions * hPortionSize) + hCoveredGap;
     const vCoveredTotal = (vCoveredPortions * vPortionSize) + vCoveredGap;
     const hStartPortionsSize = (startX - 1) * hPortionSize;
@@ -99,8 +117,8 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
 
     output[key] = {
       position: 'absolute',
-      top: `${vStartGapTotal + vStartPortionsSize + paddingPercentage}%`,
-      left: `${hStartGapTotal + hStartPortionsSize + paddingPercentage}%`,
+      top: `${vStartGapTotal + vStartPortionsSize + paddingVPercentage}%`,
+      left: `${hStartGapTotal + hStartPortionsSize + paddingHPercentage}%`,
       width: `${hCoveredTotal}%`,
       height: `${vCoveredTotal}%`,
     };
