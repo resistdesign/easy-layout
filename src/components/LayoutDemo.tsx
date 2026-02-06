@@ -20,8 +20,8 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
       const existingArea: EasyLayoutArea = output[a] || {startX: 0, startY: 0, endX: 0, endY: 0};
       const hasStartX = hasStartXMap[a] || false;
       const hasStartY = hasStartYMap[a] || false;
-      const posX = i;
-      const posY = j;
+      const posX = i + 1;
+      const posY = j + 1;
 
 
       if (!hasStartX) {
@@ -72,17 +72,23 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
 
   for (const [key, area] of Object.entries(layout)) {
     const {startX, startY, endX, endY} = area;
-    const topPercentageWithPaddingAndGap = paddingPercentage + (startY * vPortionSize) + (startY * gapPercentage);
-    const leftPercentageWithPaddingAndGap = paddingPercentage + (startX * hPortionSize) + (startX * gapPercentage);
-    const widthPercentageWithPaddingAndGap = ((endX - startX + 1) * hPortionSize) + (startX * gapPercentage);
-    const heightPercentageWithPaddingAndGap = ((endY - startY + 1) * vPortionSize) + (startY * gapPercentage);
+    const hStartGapTotal = gapPercentage * (startX - 1);
+    const vStartGapTotal = gapPercentage * (startY - 1);
+    const hCoveredPortions = endX - (startX - 1);
+    const vCoveredPortions = endY - (startY - 1);
+    const hCoveredGap = (hCoveredPortions - 1) * gapPercentage;
+    const vCoveredGap = (vCoveredPortions - 1) * gapPercentage;
+    const hCoveredTotal = (hCoveredPortions * hPortionSize) + hCoveredGap;
+    const vCoveredTotal = (vCoveredPortions * vPortionSize) + vCoveredGap;
+    const hStartPortionsSize = hCoveredPortions * hPortionSize;
+    const vStartPortionsSize = vCoveredPortions * vPortionSize;
 
     output[key] = {
       position: 'absolute',
-      top: `${topPercentageWithPaddingAndGap}%`,
-      left: `${leftPercentageWithPaddingAndGap}%`,
-      width: `${widthPercentageWithPaddingAndGap}%`,
-      height: `${heightPercentageWithPaddingAndGap}%`,
+      top: `${vStartGapTotal + vStartPortionsSize + paddingPercentage}%`,
+      left: `${hStartGapTotal + hStartPortionsSize + paddingPercentage}%`,
+      width: `${hCoveredTotal}%`,
+      height: `${vCoveredTotal}%`,
     };
   }
 
