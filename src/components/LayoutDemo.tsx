@@ -71,7 +71,12 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
   const vPortionSize = remainingVPercentage / rows;
 
   for (const [key, area] of Object.entries(layout)) {
-    const {startX, startY, endX, endY} = area;
+    const {
+      startX,
+      startY,
+      endX,
+      endY
+    } = area;
     const hStartGapTotal = gapPercentage * (startX - 1);
     const vStartGapTotal = gapPercentage * (startY - 1);
     const hCoveredPortions = endX - (startX - 1);
@@ -80,8 +85,8 @@ export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: n
     const vCoveredGap = (vCoveredPortions - 1) * gapPercentage;
     const hCoveredTotal = (hCoveredPortions * hPortionSize) + hCoveredGap;
     const vCoveredTotal = (vCoveredPortions * vPortionSize) + vCoveredGap;
-    const hStartPortionsSize = hCoveredPortions * hPortionSize;
-    const vStartPortionsSize = vCoveredPortions * vPortionSize;
+    const hStartPortionsSize = (startX - 1) * hPortionSize;
+    const vStartPortionsSize = (startY - 1) * vPortionSize;
 
     output[key] = {
       position: 'absolute',
@@ -101,8 +106,8 @@ const testLayoutAreas = [
 ];
 const testLayoutCoords = getEasyLayoutCoords(
   testLayoutAreas,
-  2,
-  2,
+  5,
+  5,
 );
 
 export function LayoutDemo() {
