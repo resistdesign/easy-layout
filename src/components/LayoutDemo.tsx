@@ -1,4 +1,4 @@
-import {useMemo, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 
 export type EasyLayoutArea = {
   startX: number;
@@ -129,15 +129,54 @@ export const getEasyLayoutCoords = (
   return output;
 };
 
+const defaultLayoutInput = 'a a b\nc c b';
+
+const parseLayoutAreas = (rawInput: string): {areas: string[][]; error?: string} => {
+  try {
+    const rows = rawInput
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0)
+      .map((line) => line.split(/\s+/).filter(Boolean));
+
+    if (rows.length === 0) {
+      return {areas: [], error: 'Layout is empty.'};
+    }
+
+    if (rows.some((row) => row.length === 0)) {
+      return {areas: [], error: 'Layout rows must contain area names.'};
+    }
+
+    return {areas: rows};
+  } catch (error) {
+    return {areas: [], error: 'Layout could not be parsed.'};
+  }
+};
+
 export function LayoutDemo() {
   const [demoWidth, setDemoWidth] = useState(1000);
   const [demoHeight, setDemoHeight] = useState(400);
   const [demoPadding, setDemoPadding] = useState(20);
   const [demoGap, setDemoGap] = useState(20);
-  const testLayoutAreas = useMemo(() => ([
+  const [layoutInput, setLayoutInput] = useState(defaultLayoutInput);
+  const [lastValidAreas, setLastValidAreas] = useState<string[][]>([
     ['a', 'a', 'b'],
     ['c', 'c', 'b'],
-  ]), []);
+  ]);
+  const {areas: parsedAreas, error: layoutError} = useMemo(
+    () => parseLayoutAreas(layoutInput),
+    [layoutInput],
+  );
+  const testLayoutAreas = useMemo(
+    () => (layoutError ? lastValidAreas : parsedAreas),
+    [layoutError, lastValidAreas, parsedAreas],
+  );
+
+  useEffect(() => {
+    if (!layoutError && parsedAreas.length > 0) {
+      setLastValidAreas(parsedAreas);
+    }
+  }, [layoutError, parsedAreas]);
   const testLayoutCoords = useMemo(() => getEasyLayoutCoords(
     testLayoutAreas,
     demoPadding,
@@ -310,6 +349,46 @@ export function LayoutDemo() {
             }}
           />
         </label>
+        <label
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 6,
+            color: '#1e1e1e',
+            fontSize: 12,
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            minWidth: 260,
+            flex: '1 1 260px',
+          }}
+        >
+          Layout Areas
+          <textarea
+            value={layoutInput}
+            onChange={(event) => {
+              setLayoutInput(event.target.value);
+            }}
+            rows={3}
+            style={{
+              resize: 'vertical',
+              minHeight: 80,
+              padding: '12px 14px',
+              borderRadius: 16,
+              border: layoutError ? '1px solid #f17c7c' : '1px solid #c7c7c7',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%)',
+              color: '#1e1e1e',
+              fontSize: 15,
+              fontWeight: 600,
+              lineHeight: 1.5,
+              boxShadow: '0 8px 20px rgba(16, 24, 40, 0.08)',
+              outlineColor: '#ff7849',
+              fontFamily: '"Space Grotesk", "Segoe UI", sans-serif',
+            }}
+          />
+          <span style={{textTransform: 'none', letterSpacing: 'normal', color: layoutError ? '#b42318' : '#5f6368'}}>
+            {layoutError ? `${layoutError} Showing last valid layout.` : 'Use spaces for columns and new lines for rows.'}
+          </span>
+        </label>
       </div>
       <div
         className="LayoutDemo"
@@ -320,9 +399,11 @@ export function LayoutDemo() {
           height: demoHeight,
         }}
       >
-        <div style={testLayoutCoords.a}>a</div>
-        <div style={testLayoutCoords.b}>b</div>
-        <div style={testLayoutCoords.c}>c</div>
+        {Object.entries(testLayoutCoords).map(([areaName, areaStyle]) => (
+          <div key={areaName} style={areaStyle}>
+            {areaName}
+          </div>
+        ))}
       </div>
     </div>
   );
