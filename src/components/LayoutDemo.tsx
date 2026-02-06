@@ -133,8 +133,10 @@ const testLayoutAreas = [
 ];
 const testLayoutCoords = getEasyLayoutCoords(
   testLayoutAreas,
-  5,
-  5,
+  10,
+  10,
+  200,
+  100,
 );
 
 export function LayoutDemo() {
@@ -144,8 +146,8 @@ export function LayoutDemo() {
       style={{
         position: 'relative',
         backgroundColor: 'darkgray',
-        width: '50vw',
-        height: '40vh',
+        width: '200px',
+        height: '100px',
       }}
     >
       <div style={testLayoutCoords.a}>a</div>
