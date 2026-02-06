@@ -20,8 +20,8 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
       const existingArea: EasyLayoutArea = output[a] || {startX: 0, startY: 0, endX: 0, endY: 0};
       const hasStartX = hasStartXMap[a] || false;
       const hasStartY = hasStartYMap[a] || false;
-      const posX = i + 1;
-      const posY = j + 1;
+      const posX = j + 1;
+      const posY = i + 1;
 
 
       if (!hasStartX) {
