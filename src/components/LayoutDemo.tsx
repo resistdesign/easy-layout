@@ -100,6 +100,8 @@ export function LayoutDemo({initial = 0}: CounterProps) {
       }}
     >
       <div style={testLayoutCoords.a}>a</div>
+      <div style={testLayoutCoords.b}>b</div>
+      <div style={testLayoutCoords.c}>c</div>
     </div>
   );
 }
