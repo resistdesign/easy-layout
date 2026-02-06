@@ -1,5 +1,3 @@
-import {useState} from 'react';
-
 type CounterProps = {
   initial?: number;
 };
@@ -26,8 +24,8 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
       const existingArea: EasyLayoutArea = output[a] || {x: 0, y: 0, width: 0, height: 0};
       const hasStartX = hasStartXMap[a] || false;
       const hasStartY = hasStartYMap[a] || false;
-      const posX = i + 1;
-      const posY = j + 1;
+      const posX = i;
+      const posY = j;
 
 
       if (!hasStartX) {
@@ -51,15 +49,57 @@ export const makeEasyLayout = (areas: string[][] = []): EasyLayoutOutput => {
   return output;
 };
 
-export function LayoutDemo({initial = 0}: CounterProps) {
-  const [count, setCount] = useState(initial);
+export const getEasyLayoutCoords = (areas: string[][] = [], paddingPercentage: number = 0, gapPercentage: number = 0): Record<string, {
+  top: string;
+  left: string;
+  width: string;
+  height: string;
+}> => {
+  const layout = makeEasyLayout(areas);
+  const rows = areas.length;
+  const cols = areas.reduce((acc, row) => Math.max(acc, row.length), 0);
+  const output: Record<string, {
+    top: string;
+    left: string;
+    width: string;
+    height: string;
+  }> = {};
+  const totalHGutterPercentage = (paddingPercentage * 2) + (gapPercentage * (cols - 1));
+  const totalVGutterPercentage = (paddingPercentage * 2) + (gapPercentage * (rows - 1));
+  const remainingHPercentage = 100 - totalHGutterPercentage;
+  const remainingVPercentage = 100 - totalVGutterPercentage;
+  const hPortionSize = remainingHPercentage / cols;
+  const vPortionSize = remainingVPercentage / rows;
 
+  for (const [key, area] of Object.entries(layout)) {
+    const {startX, startY, endX, endY} = area;
+    const top = `${paddingPercentage + (startY * vPortionSize) + (startY * gapPercentage)}%`;
+    const left = `${paddingPercentage + (startX * hPortionSize) + (startX * gapPercentage)}%`;
+    const width = `${(endX - startX + 1) * hPortionSize}%`;
+    const height = `${(endY - startY + 1) * vPortionSize}%`;
+
+    output[key] = {top, left, width, height};
+  }
+
+  return output;
+};
+
+const testLayoutAreas = [
+  ['a', 'a', 'b'],
+  ['c', 'c', 'b'],
+];
+const testLayoutCoords = getEasyLayoutCoords(testLayoutAreas);
+
+export function LayoutDemo({initial = 0}: CounterProps) {
   return (
-    <div>
-      <p>Count: {count}</p>
-      <button type="button" onClick={() => setCount((value) => value + 1)}>
-        Increment
-      </button>
+    <div
+      style={{
+        backgroundColor: 'darkgray',
+        width: '50vw',
+        height: '40vh',
+      }}
+    >
+      <div style={testLayoutCoords.a}>a</div>
     </div>
   );
 }
